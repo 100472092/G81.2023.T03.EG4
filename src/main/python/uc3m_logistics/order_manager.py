@@ -48,48 +48,48 @@ class OrderManager:
     def validate_tracking_code( t_c ):
         """Method for validating sha256 values"""
         myregex = re.compile(r"[0-9a-fA-F]{64}$")
-        res = myregex.fullmatch(t_c)
-        if not res:
+        regex_match = myregex.fullmatch(t_c)
+        if not regex_match:
             raise OrderManagementException("tracking_code format is not valid")
 
     @staticmethod
-    def save_store( data ):
+    def save_order_id_store(data):
         """Medthod for saving the orders store"""
         file_store = JSON_FILES_PATH + "orders_store.json"
         #first read the file
         try:
             with open(file_store, "r", encoding="utf-8", newline="") as file:
-                data_list = json.load(file)
+                orders_store_list = json.load(file)
         except FileNotFoundError:
             # file is not found , so  init my data_list
-            data_list = []
+            orders_store_list = []
         except json.JSONDecodeError as ex:
             raise OrderManagementException("JSON Decode Error - Wrong JSON Format") from ex
 
         found = False
-        for item in data_list:
-            if item["_OrderRequest__order_id"] == data.order_id:
+        for order in orders_store_list:
+            if order["_OrderRequest__order_id"] == data.order_id:
                 found = True
         if found is False:
-            data_list.append(data.__dict__)
+            orders_store_list.append(data.__dict__)
         else:
             raise OrderManagementException("order_id is already registered in orders_store")
         try:
             with open(file_store, "w", encoding="utf-8", newline="") as file:
-                json.dump(data_list, file, indent=2)
+                json.dump(orders_store_list, file, indent=2)
         except FileNotFoundError as ex:
             raise OrderManagementException("Wrong file or file path") from ex
         return True
 
     @staticmethod
-    def save_fast(data):
+    def save_new_order(data): # Este método no lo entiendo, ya que save_order_id_store hace lo mismo pero además crea la lista
         """Method for saving the orders store"""
         orders_store = JSON_FILES_PATH + "orders_store.json"
         with open(orders_store, "r+", encoding="utf-8", newline="") as file:
-            data_list = json.load(file)
-            data_list.append(data.__dict__)
+            store_list = json.load(file)
+            store_list.append(data.__dict__)
             file.seek(0)
-            json.dump(data_list, file, indent=2)
+            json.dump(store_list, file, indent=2)
 
     @staticmethod
     def save_orders_shipped( shipment ):
@@ -98,22 +98,23 @@ class OrderManager:
         # first read the file
         try:
             with open(shimpents_store_file, "r", encoding="utf-8", newline="") as file:
-                data_list = json.load(file)
+                shipments_store_list = json.load(file)
         except FileNotFoundError:
             # file is not found , so  init my data_list
-            data_list = []
+            shipments_store_list = []
         except json.JSONDecodeError as ex:
             raise OrderManagementException("JSON Decode Error - Wrong JSON Format") from ex
 
         #append the shipments list
-        data_list.append(shipment.__dict__)
+        shipments_store_list.append(shipment.__dict__)
 
         try:
             with open(shimpents_store_file, "w", encoding="utf-8", newline="") as file:
-                json.dump(data_list, file, indent=2)
+                json.dump(shipments_store_list, file, indent=2)
         except FileNotFoundError as ex:
             raise OrderManagementException("Wrong file or file path") from ex
 
+# HASTA AQUÍ HE RENOMBRADO
 
     #pylint: disable=too-many-arguments
     def register_order( self, product_id,
@@ -149,7 +150,7 @@ class OrderManager:
                                     phone_number,
                                     zip_code)
 
-        self.save_store(my_order)
+        self.save_order_id_store(my_order)
 
         return my_order.order_id
 
