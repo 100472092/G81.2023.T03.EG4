@@ -113,20 +113,10 @@ class OrderManager:
                         zip_code ):
         """Register the orders into the order's file"""
 
-        myregex = re.compile(r"(Regular|Premium)")
-        regex_match = myregex.fullmatch(order_type)
-        if not regex_match:
-            raise OrderManagementException ("order_type is not valid")
+        self.validate_attr(order_type,r"(Regular|Premium)","order_type is not valid")
+        self.validate_attr(address, r"^(?=^.{20,100}$)(([a-zA-Z0-9]+\s)+[a-zA-Z0-9]+)$", "address is not valid")
+        self.validate_attr(phone_number, r"^(\+)[0-9]{11}", "phone number is not valid")
 
-        myregex = re.compile(r"^(?=^.{20,100}$)(([a-zA-Z0-9]+\s)+[a-zA-Z0-9]+)$")
-        regex_match = myregex.fullmatch(address)
-        if not regex_match:
-            raise OrderManagementException ("address is not valid")
-
-        myregex = re.compile(r"^(\+)[0-9]{11}")
-        regex_match = myregex.fullmatch(phone_number)
-        if not regex_match:
-            raise OrderManagementException ("phone number is not valid")
         if zip_code.isnumeric() and len(zip_code) == 5:
             if (int(zip_code) > 52999 or int(zip_code) < 1000):
                 raise OrderManagementException("zip_code is not valid")
@@ -142,6 +132,12 @@ class OrderManager:
         self.save_order_id_store(my_order)
 
         return my_order.order_id
+
+    def validate_attr(self, order_type,regex,mesage):
+        myregex = re.compile(regex)
+        regex_match = myregex.fullmatch(order_type)
+        if not regex_match:
+            raise OrderManagementException(mesage)
 
     #pylint: disable=too-many-locals
     def send_product ( self, input_file ):
