@@ -82,16 +82,6 @@ class OrderManager:
         return True
 
     @staticmethod
-    def save_new_order(data): # Este método no lo entiendo, ya que save_order_id_store hace lo mismo pero además crea la lista
-        """Method for saving the orders store"""
-        orders_store = JSON_FILES_PATH + "orders_store.json"
-        with open(orders_store, "r+", encoding="utf-8", newline="") as file:
-            store_list = json.load(file)
-            store_list.append(data.__dict__)
-            file.seek(0)
-            json.dump(store_list, file, indent=2)
-
-    @staticmethod
     def save_orders_shipped( shipment ):
         """Saves the shipping object into a file"""
         shimpents_store_file = JSON_FILES_PATH + "shipments_store.json"
@@ -114,7 +104,6 @@ class OrderManager:
         except FileNotFoundError as ex:
             raise OrderManagementException("Wrong file or file path") from ex
 
-# HASTA AQUÍ HE RENOMBRADO
 
     #pylint: disable=too-many-arguments
     def register_order( self, product_id,
@@ -125,18 +114,18 @@ class OrderManager:
         """Register the orders into the order's file"""
 
         myregex = re.compile(r"(Regular|Premium)")
-        res = myregex.fullmatch(order_type)
-        if not res:
+        regex_match = myregex.fullmatch(order_type)
+        if not regex_match:
             raise OrderManagementException ("order_type is not valid")
 
         myregex = re.compile(r"^(?=^.{20,100}$)(([a-zA-Z0-9]+\s)+[a-zA-Z0-9]+)$")
-        res = myregex.fullmatch(address)
-        if not res:
+        regex_match = myregex.fullmatch(address)
+        if not regex_match:
             raise OrderManagementException ("address is not valid")
 
         myregex = re.compile(r"^(\+)[0-9]{11}")
-        res = myregex.fullmatch(phone_number)
-        if not res:
+        regex_match = myregex.fullmatch(phone_number)
+        if not regex_match:
             raise OrderManagementException ("phone number is not valid")
         if zip_code.isnumeric() and len(zip_code) == 5:
             if (int(zip_code) > 52999 or int(zip_code) < 1000):
@@ -169,8 +158,8 @@ class OrderManager:
         #check all the information
         try:
             myregex = re.compile(r"[0-9a-fA-F]{32}$")
-            res = myregex.fullmatch(data["OrderID"])
-            if not res:
+            regex_match = myregex.fullmatch(data["OrderID"])
+            if not regex_match:
                 raise OrderManagementException("order id is not valid")
         except KeyError as ex:
             raise  OrderManagementException("Bad label") from ex
@@ -178,8 +167,8 @@ class OrderManager:
         try:
             regex_email = r'^[a-z0-9]+([\._]?[a-z0-9]+)+[@](\w+[.])+\w{2,3}$'
             myregex = re.compile(regex_email)
-            res = myregex.fullmatch(data["ContactEmail"])
-            if not res:
+            regex_match = myregex.fullmatch(data["ContactEmail"])
+            if not regex_match:
                 raise OrderManagementException("contact email is not valid")
         except KeyError as ex:
             raise OrderManagementException("Bad label") from ex
@@ -188,16 +177,16 @@ class OrderManager:
         with open(file_store, "r", encoding="utf-8", newline="") as file:
             data_list = json.load(file)
         found = False
-        for item in data_list:
-            if item["_OrderRequest__order_id"] == data["OrderID"]:
+        for order in data_list:
+            if order["_OrderRequest__order_id"] == data["OrderID"]:
                 found = True
                 #retrieve the orders data
-                proid = item["_OrderRequest__product_id"]
-                address = item["_OrderRequest__delivery_address"]
-                reg_type = item["_OrderRequest__order_type"]
-                phone = item["_OrderRequest__phone_number"]
-                order_timestamp = item["_OrderRequest__time_stamp"]
-                zip_code = item["_OrderRequest__zip_code"]
+                proid = order["_OrderRequest__product_id"]
+                address = order["_OrderRequest__delivery_address"]
+                reg_type = order["_OrderRequest__order_type"]
+                phone = order["_OrderRequest__phone_number"]
+                order_timestamp = order["_OrderRequest__time_stamp"]
+                zip_code = order["_OrderRequest__zip_code"]
                 #set the time when the order was registered for checking the md5
                 with freeze_time(datetime.fromtimestamp(order_timestamp).date()):
                     order = OrderRequest(product_id=proid,
@@ -239,10 +228,10 @@ class OrderManager:
             raise OrderManagementException("shipments_store not found") from ex
         #search this tracking_code
         found = False
-        for item in data_list:
-            if item["_OrderShipping__tracking_code"] == tracking_code:
+        for shipment in data_list:
+            if shipment["_OrderShipping__tracking_code"] == tracking_code:
                 found = True
-                del_timestamp = item["_OrderShipping__delivery_day"]
+                del_timestamp = shipment["_OrderShipping__delivery_day"]
         if not found:
             raise OrderManagementException("tracking_code is not found")
 
