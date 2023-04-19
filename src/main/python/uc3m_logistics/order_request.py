@@ -2,13 +2,15 @@
 import hashlib
 import json
 from datetime import datetime
+from .atributo_product_id import Product_id
+
 
 class OrderRequest:
     """Class representing the register of the order in the system"""
     #pylint: disable=too-many-arguments
     def __init__( self, product_id, order_type,
                   delivery_address, phone_number, zip_code ):
-        self.__product_id = product_id
+        self.__product_id = Product_id(product_id).validate_attr(product_id)
         self.__delivery_address = delivery_address
         self.__order_type = order_type
         self.__phone_number = phone_number
