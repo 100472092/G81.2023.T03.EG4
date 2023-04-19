@@ -6,7 +6,7 @@ from .atributo_product_id import Product_id
 from .atributo_order_type import Order_type
 from .atributo_address import Address
 from .atributo_phone_number import Phone_number
-
+from .atributo_zip_code import Zip_code
 
 class OrderRequest:
     """Class representing the register of the order in the system"""
@@ -17,7 +17,7 @@ class OrderRequest:
         self.__delivery_address = Address(delivery_address).validate_attr(delivery_address)
         self.__order_type = Order_type(order_type).validate_attr(order_type)
         self.__phone_number = Phone_number(phone_number).validate_attr(phone_number)
-        self.__zip_code = zip_code
+        self.__zip_code = Zip_code(zip_code).validate_attr(zip_code)
         justnow = datetime.utcnow()
         self.__time_stamp = datetime.timestamp(justnow)
         self.__order_id =  hashlib.md5(self.__str__().encode()).hexdigest()

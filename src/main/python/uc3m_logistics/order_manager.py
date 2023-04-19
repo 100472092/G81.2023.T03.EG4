@@ -104,7 +104,7 @@ class OrderManager:
         """Register the orders into the order's file"""
 
 
-        self.validate_zip_code(zip_code)
+
 
         my_order = OrderRequest(product_id,
                                     order_type,
