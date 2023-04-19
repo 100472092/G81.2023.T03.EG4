@@ -1,5 +1,4 @@
 from .Atributo import Atributos
-from .order_management_exception import OrderManagementException
 
 class Order_type(Atributos):
     def __init__(self, valor):

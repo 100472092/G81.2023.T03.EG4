@@ -103,7 +103,6 @@ class OrderManager:
                         zip_code ):
         """Register the orders into the order's file"""
 
-        self.validate_attr(address, r"^(?=^.{20,100}$)(([a-zA-Z0-9]+\s)+[a-zA-Z0-9]+)$", "address is not valid")
         self.validate_attr(phone_number, r"^(\+)[0-9]{11}", "phone number is not valid")
 
         self.validate_zip_code(zip_code)
