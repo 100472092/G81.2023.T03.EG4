@@ -102,10 +102,6 @@ class OrderManager:
                         phone_number,
                         zip_code ):
         """Register the orders into the order's file"""
-
-
-
-
         my_order = OrderRequest(product_id,
                                     order_type,
                                     address,
@@ -115,19 +111,6 @@ class OrderManager:
         self.save_order_id(my_order)
 
         return my_order.order_id
-
-    def validate_zip_code(self, zip_code):
-        if zip_code.isnumeric() and len(zip_code) == 5:
-            if (int(zip_code) > 52999 or int(zip_code) < 1000):
-                raise OrderManagementException("zip_code is not valid")
-        else:
-            raise OrderManagementException("zip_code format is not valid")
-
-    def validate_attr(self, order_type,regex,mesage):
-        myregex = re.compile(regex)
-        regex_match = myregex.fullmatch(order_type)
-        if not regex_match:
-            raise OrderManagementException(mesage)
 
     #pylint: disable=too-many-locals
     def send_product ( self, input_file ):
