@@ -138,11 +138,7 @@ class OrderManager:
         self.validate_attr(address, r"^(?=^.{20,100}$)(([a-zA-Z0-9]+\s)+[a-zA-Z0-9]+)$", "address is not valid")
         self.validate_attr(phone_number, r"^(\+)[0-9]{11}", "phone number is not valid")
 
-        if zip_code.isnumeric() and len(zip_code) == 5:
-            if (int(zip_code) > 52999 or int(zip_code) < 1000):
-                raise OrderManagementException("zip_code is not valid")
-        else:
-            raise OrderManagementException("zip_code format is not valid")
+        self.validate_zip_code(zip_code)
         if self.validate_ean13(product_id):
             my_order = OrderRequest(product_id,
                                     order_type,
@@ -153,6 +149,13 @@ class OrderManager:
         self.save_order_id(my_order)
 
         return my_order.order_id
+
+    def validate_zip_code(self, zip_code):
+        if zip_code.isnumeric() and len(zip_code) == 5:
+            if (int(zip_code) > 52999 or int(zip_code) < 1000):
+                raise OrderManagementException("zip_code is not valid")
+        else:
+            raise OrderManagementException("zip_code format is not valid")
 
     def validate_attr(self, order_type,regex,mesage):
         myregex = re.compile(regex)
@@ -182,34 +185,7 @@ class OrderManager:
         except KeyError as ex:
             raise OrderManagementException("Bad label") from ex
 
-        file_store = JSON_FILES_PATH + "orders_store.json"
-
-        with open(file_store, "r", encoding="utf-8", newline="") as file:
-            data_list = json.load(file)
-        found = False
-        for order in data_list:
-            if order["_OrderRequest__order_id"] == data["OrderID"]:
-                found = True
-                #retrieve the orders data
-                proid = order["_OrderRequest__product_id"]
-                address = order["_OrderRequest__delivery_address"]
-                reg_type = order["_OrderRequest__order_type"]
-                phone = order["_OrderRequest__phone_number"]
-                order_timestamp = order["_OrderRequest__time_stamp"]
-                zip_code = order["_OrderRequest__zip_code"]
-                #set the time when the order was registered for checking the md5
-                with freeze_time(datetime.fromtimestamp(order_timestamp).date()):
-                    order = OrderRequest(product_id=proid,
-                                         delivery_address=address,
-                                         order_type=reg_type,
-                                         phone_number=phone,
-                                         zip_code=zip_code)
-
-                if order.order_id != data["OrderID"]:
-                    raise OrderManagementException("Orders' data have been manipulated")
-
-        if not found:
-            raise OrderManagementException("order_id not found")
+        proid, reg_type = self.getting_attr_from_order_store(data)
 
         my_sign= OrderShipping(product_id=proid,
                                order_id=data["OrderID"],
@@ -221,6 +197,35 @@ class OrderManager:
         self.save_orders_shipped(my_sign)
 
         return my_sign.tracking_code
+
+    def getting_attr_from_order_store(self, data):
+        file_store = JSON_FILES_PATH + "orders_store.json"
+        with open(file_store, "r", encoding="utf-8", newline="") as file:
+            data_list = json.load(file)
+        found = False
+        for order in data_list:
+            if order["_OrderRequest__order_id"] == data["OrderID"]:
+                found = True
+                # retrieve the orders data
+                proid = order["_OrderRequest__product_id"]
+                address = order["_OrderRequest__delivery_address"]
+                reg_type = order["_OrderRequest__order_type"]
+                phone = order["_OrderRequest__phone_number"]
+                order_timestamp = order["_OrderRequest__time_stamp"]
+                zip_code = order["_OrderRequest__zip_code"]
+                # set the time when the order was registered for checking the md5
+                with freeze_time(datetime.fromtimestamp(order_timestamp).date()):
+                    order = OrderRequest(product_id=proid,
+                                         delivery_address=address,
+                                         order_type=reg_type,
+                                         phone_number=phone,
+                                         zip_code=zip_code)
+
+                if order.order_id != data["OrderID"]:
+                    raise OrderManagementException("Orders' data have been manipulated")
+        if not found:
+            raise OrderManagementException("order_id not found")
+        return proid, reg_type
 
     def deliver_product( self, tracking_code ):
         """Register the delivery of the product"""
