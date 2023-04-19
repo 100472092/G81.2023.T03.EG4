@@ -9,7 +9,7 @@ from .order_management_exception import OrderManagementException
 from .order_shipping import OrderShipping
 from .order_manager_config import JSON_FILES_PATH
 from .json_op_orders_store import Json_op_order_store
-
+from .json_op_orders_shiped import Json_op_order_shiped
 
 class OrderManager:
     """Class for providing the methods for managing the orders process"""
@@ -25,9 +25,8 @@ class OrderManager:
         if not regex_match:
             raise OrderManagementException("tracking_code format is not valid")
 
-    @staticmethod
+    """@staticmethod
     def save_orders_shipped(shipment):
-        """Saves the shipping object into a file"""
         shimpents_store_file = JSON_FILES_PATH + "shipments_store.json"
         # first read the file
         try:
@@ -47,7 +46,7 @@ class OrderManager:
                 json.dump(shipments_store_list, file, indent=2)
         except FileNotFoundError as ex:
             raise OrderManagementException("Wrong file or file path") from ex
-
+"""
     def save_shipments_delivered(self, tracking_code):
         shipments_file = JSON_FILES_PATH + "shipments_delivered.json"
         try:
@@ -110,8 +109,9 @@ class OrderManager:
                                 delivery_email=data["ContactEmail"])
 
         # save the OrderShipping in shipments_store.json
-
-        self.save_orders_shipped(my_sign)
+        store = Json_op_order_shiped()
+        store.save_shipments_delivered(my_sign)
+        #self.save_orders_shipped(my_sign)
 
         return my_sign.tracking_code
 
