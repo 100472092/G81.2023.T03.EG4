@@ -176,14 +176,10 @@ class OrderManager:
             raise OrderManagementException("JSON Decode Error - Wrong JSON Format") from ex
 
         #check all the information
-        try:
-            self.validate_attr(data["OrderID"],r"[0-9a-fA-F]{32}$","order id is not valid")
-        except KeyError as ex:
-            raise OrderManagementException("Bad label") from ex
-        try:
-            self.validate_attr(data["ContactEmail"],r'^[a-z0-9]+([\._]?[a-z0-9]+)+[@](\w+[.])+\w{2,3}$',"contact email is not valid")
-        except KeyError as ex:
-            raise OrderManagementException("Bad label") from ex
+
+        self.validate_dict_attr(data, "OrderID",r"[0-9a-fA-F]{32}$", "Bad label", "order id is not valid")
+        self.validate_dict_attr(data, "ContactEmail", r'^[a-z0-9]+([\._]?[a-z0-9]+)+[@](\w+[.])+\w{2,3}$', "Bad label", "contact email is not valid")
+
 
         proid, reg_type = self.getting_attr_from_order_store(data)
 
@@ -197,6 +193,12 @@ class OrderManager:
         self.save_orders_shipped(my_sign)
 
         return my_sign.tracking_code
+    def validate_dict_attr(self, dicci, key, regex, message_key_error, message):
+        """validates dicctionary data"""
+        try:
+            self.validate_attr(dicci[key], regex, message)
+        except KeyError as ex:
+            raise OrderManagementException(message_key_error) from ex
 
     def getting_attr_from_order_store(self, data):
         file_store = JSON_FILES_PATH + "orders_store.json"
