@@ -108,19 +108,19 @@ class OrderManager:
         shipments_file = JSON_FILES_PATH + "shipments_delivered.json"
         try:
             with open(shipments_file, "r", encoding="utf-8", newline="") as file:
-                data_list = json.load(file)
+                shipments_data = json.load(file)
         except FileNotFoundError as ex:
             # file is not found , so  init my data_list
-            data_list = []
+            shipments_data = []
         except json.JSONDecodeError as ex:
             raise OrderManagementException("JSON Decode Error - Wrong JSON Format") from ex
 
             # append the delivery info
-        data_list.append(str(tracking_code))
-        data_list.append(str(datetime.utcnow()))
+        shipments_data.append(str(tracking_code))
+        shipments_data.append(str(datetime.utcnow()))
         try:
             with open(shipments_file, "w", encoding="utf-8", newline="") as file:
-                json.dump(data_list, file, indent=2)
+                json.dump(shipments_data, file, indent=2)
         except FileNotFoundError as ex:
             raise OrderManagementException("Wrong file or file path") from ex
 
