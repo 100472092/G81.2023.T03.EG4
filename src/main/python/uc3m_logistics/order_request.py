@@ -3,6 +3,7 @@ import hashlib
 import json
 from datetime import datetime
 from .atributo_product_id import Product_id
+from .atributo_order_type import Order_type
 
 
 class OrderRequest:
@@ -12,7 +13,7 @@ class OrderRequest:
                   delivery_address, phone_number, zip_code ):
         self.__product_id = Product_id(product_id).validate_attr(product_id)
         self.__delivery_address = delivery_address
-        self.__order_type = order_type
+        self.__order_type = Order_type(order_type).validate_attr(order_type)
         self.__phone_number = phone_number
         self.__zip_code = zip_code
         justnow = datetime.utcnow()
