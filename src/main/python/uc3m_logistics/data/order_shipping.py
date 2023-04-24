@@ -2,8 +2,8 @@
 from datetime import datetime
 import hashlib
 import json
-from .order_management_exception import OrderManagementException
-from .order_manager_config import JSON_FILES_PATH
+from uc3m_logistics.exception.order_management_exception import OrderManagementException
+from uc3m_logistics.config.order_manager_config import JSON_FILES_PATH
 from freezegun import freeze_time
 from .order_request import OrderRequest
 from .atributo_email import Email

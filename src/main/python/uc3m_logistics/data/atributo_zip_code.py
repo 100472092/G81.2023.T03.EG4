@@ -1,5 +1,5 @@
 from .Atributo import Atributos
-from .order_management_exception import OrderManagementException
+from uc3m_logistics.exception.order_management_exception import OrderManagementException
 
 class Zip_code(Atributos):
     def __init__(self, valor):

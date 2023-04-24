@@ -1,7 +1,7 @@
 from datetime import datetime
 from .atributo_tracking_code import Tracking_code
-from .json_op_orders_delivered import Json_op_order_delivered
-from .order_management_exception import OrderManagementException
+from uc3m_logistics.store.json_op_orders_delivered import Json_op_order_delivered
+from uc3m_logistics.exception.order_management_exception import OrderManagementException
 class OrderDelivered():
     def __init__(self,tracking_code):
         self.tracking_code = Tracking_code(tracking_code).validate_attr(tracking_code)

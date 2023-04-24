@@ -1,5 +1,5 @@
 from .Atributo import Atributos
-from .order_management_exception import OrderManagementException
+from uc3m_logistics.exception.order_management_exception import OrderManagementException
 class Product_id(Atributos):
     def __init__(self, valor):
         self._validation_pattern = r"^[0-9]{13}$"

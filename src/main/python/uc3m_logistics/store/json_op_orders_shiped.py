@@ -1,5 +1,5 @@
 from .json_op import Json_op
-from .order_manager_config import JSON_FILES_PATH
+from uc3m_logistics.config.order_manager_config import JSON_FILES_PATH
 
 class Json_op_order_shiped(Json_op):
     def __init__(self):
