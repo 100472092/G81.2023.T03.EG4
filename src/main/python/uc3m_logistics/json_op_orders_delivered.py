@@ -10,13 +10,7 @@ class Json_op_order_delivered(Json_op):
         self.ip = "_OrderShipping__tracking_code"
         self.data_list = None
 
-    def check_tracking_code(self, tracking_code):
-        self.open()
-        # search this tracking_code
-        order = self.search(tracking_code)
-        if order is None:
-            raise OrderManagementException("tracking_code is not found")
-        return order["_OrderShipping__delivery_day"]
+
 
     def open(self):
         try:

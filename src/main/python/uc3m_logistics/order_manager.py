@@ -1,26 +1,22 @@
 """Module """
-import datetime
-import re
-from datetime import datetime
 from .order_request import OrderRequest
-from .order_management_exception import OrderManagementException
 from .order_shipping import OrderShipping
 from .json_op_orders_store import Json_op_order_store
 from .json_op_orders_shiped import Json_op_order_shiped
 from .json_op_orders_delivered import Json_op_order_delivered
+from .order_delivered import OrderDelivered
 class OrderManager:
     """Class for providing the methods for managing the orders process"""
 
     def __init__(self):
         pass
 
-    @staticmethod
+    """@staticmethod
     def validate_tracking_code(t_c):
-        """Method for validating sha256 values"""
         myregex = re.compile(r"[0-9a-fA-F]{64}$")
         regex_match = myregex.fullmatch(t_c)
         if not regex_match:
-            raise OrderManagementException("tracking_code format is not valid")
+            raise OrderManagementException("tracking_code format is not valid")"""
 
     # pylint: disable=too-many-arguments
     def register_order(self, product_id,
@@ -50,14 +46,8 @@ class OrderManager:
         return my_sign.tracking_code
     def deliver_product(self, tracking_code):
         """Register the delivery of the product"""
-        self.validate_tracking_code(tracking_code)
-
-        del_timestamp = Json_op_order_delivered().check_tracking_code(tracking_code)
-        today = datetime.today().date()
-        delivery_date = datetime.fromtimestamp(del_timestamp).date()
-        if delivery_date != today:
-            raise OrderManagementException("Today is not the delivery date")
-
+        order_deliv = OrderDelivered(tracking_code)
         store = Json_op_order_delivered()
-        store.save_shipments_delivered(tracking_code)
+        store.save_shipments_delivered(order_deliv.tracking_code)
         return True
+
