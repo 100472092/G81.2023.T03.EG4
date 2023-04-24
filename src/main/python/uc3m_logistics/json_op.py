@@ -19,13 +19,13 @@ class Json_op():
             self.data_list = []
         except json.JSONDecodeError as ex:
             raise OrderManagementException("JSON Decode Error - Wrong JSON Format") from ex
-    def search(self, key, value):
+    def search(self, value):
         if self.data_list is None:
             self.open()
         for item in self.data_list:
-            if item[key] == value:
-                return True
-        return False
+            if item[self.ip] == value:
+                return item
+        return None
     def save(self):
         if self.data_list is None:
             self.open()
