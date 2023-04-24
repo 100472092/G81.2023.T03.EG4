@@ -48,6 +48,6 @@ class OrderManager:
         """Register the delivery of the product"""
         order_deliv = OrderDelivered(tracking_code)
         store = Json_op_order_delivered()
-        store.save_shipments_delivered(order_deliv.tracking_code)
+        store.save_shipments_delivered(order_deliv)
         return True
 

@@ -1,7 +1,6 @@
 from .json_op import Json_op
 from .order_manager_config import JSON_FILES_PATH
 from .order_management_exception import OrderManagementException
-from .order_delivered import OrderDelivered
 import json
 
 class Json_op_order_delivered(Json_op):
@@ -9,9 +8,6 @@ class Json_op_order_delivered(Json_op):
         self.path = JSON_FILES_PATH + "shipments_store.json"
         self.ip = "_OrderShipping__tracking_code"
         self.data_list = None
-
-
-
     def open(self):
         try:
             with open(self.path, "r", encoding="utf-8", newline="") as file:
@@ -21,8 +17,7 @@ class Json_op_order_delivered(Json_op):
             raise OrderManagementException("shipments_store not found")
         except json.JSONDecodeError as ex:
             raise OrderManagementException("JSON Decode Error - Wrong JSON Format") from ex
-    def save_shipments_delivered(self, tracking_code):
+    def save_shipments_delivered(self, order_del):
         super().open()
-        myorder_del = OrderDelivered(tracking_code)
-        self.data_list.append(myorder_del.__dict__)
+        self.data_list.append(order_del.__dict__)
         self.save()
