@@ -1,20 +1,29 @@
 """Contains the class OrderShipping"""
 from datetime import datetime
 import hashlib
-
+import json
+from .order_management_exception import OrderManagementException
+from .order_manager_config import JSON_FILES_PATH
+from freezegun import freeze_time
+from .order_request import OrderRequest
+from .atributo_email import Email
+from .atributo_order_id import Order_id
 #pylint: disable=too-many-instance-attributes
 class OrderShipping():
     """Class representing the shipping of an order"""
 
-    def __init__(self, product_id, order_id, delivery_email, order_type):
+    def __init__(self, input_file):
+        self.__json_content = self.read_json_file(input_file)
+        self.__myorder_id , self.__myemail = self.validate_key_labels(self.__json_content)
+        self.__order_id = Order_id(self.__myorder_id).validate_attr(self.__myorder_id)
+        self.__delivery_email = Email(self.__myemail).validate_attr(self.__myemail)
+        self.__product_id, self.__order_type = self.getting_attr_from_order_store(self.__json_content)
         self.__alg = "SHA-256"
         self.__type = "DS"
-        self.__product_id = product_id
-        self.__order_id = order_id
-        self.__delivery_email = delivery_email
+
         justnow = datetime.utcnow()
         self.__issued_at = datetime.timestamp(justnow)
-        if order_type == "Regular":
+        if self.__order_type == "Regular":
             delivery_days = 7
         else:
             delivery_days = 1
@@ -28,6 +37,53 @@ class OrderShipping():
         return "{alg:" + self.__alg + ",typ:" + self.__type + ",order_id:" + \
                self.__order_id + ",issuedate:" + str(self.__issued_at) + \
                ",deliveryday:" + str(self.__delivery_day) + "}"
+
+    def read_json_file(self, input_file):
+        try:
+            with open(input_file, "r", encoding="utf-8", newline="") as file:
+                data = json.load(file)
+        except FileNotFoundError as ex:
+            # file is not found
+            raise OrderManagementException("File is not found") from ex
+        except json.JSONDecodeError as ex:
+            raise OrderManagementException("JSON Decode Error - Wrong JSON Format") from ex
+        return data
+    def validate_key_labels(self,data):
+        try:
+            order_id = data["OrderID"]
+            email = data["ContactEmail"]
+        except KeyError as ex:
+            raise OrderManagementException("Bad label") from ex
+        return order_id,email
+
+    def getting_attr_from_order_store(self,data):
+        file_store = JSON_FILES_PATH + "orders_store.json"
+        with open(file_store, "r", encoding="utf-8", newline="") as file:
+            data_list = json.load(file)
+        found = False
+        for order in data_list:
+            if order["_OrderRequest__order_id"] == data["OrderID"]:
+                found = True
+                # retrieve the orders data
+                prod_id = order["_OrderRequest__product_id"]
+                address = order["_OrderRequest__delivery_address"]
+                reg_type = order["_OrderRequest__order_type"]
+                phone = order["_OrderRequest__phone_number"]
+                order_timestamp = order["_OrderRequest__time_stamp"]
+                zip_code = order["_OrderRequest__zip_code"]
+                # set the time when the order was registered for checking the md5
+                with freeze_time(datetime.fromtimestamp(order_timestamp).date()):
+                    order = OrderRequest(product_id=prod_id,
+                                         delivery_address=address,
+                                         order_type=reg_type,
+                                         phone_number=phone,
+                                         zip_code=zip_code)
+
+                if order.order_id != data["OrderID"]:
+                    raise OrderManagementException("Orders' data have been manipulated")
+        if not found:
+            raise OrderManagementException("order_id not found")
+        return prod_id, reg_type
 
     @property
     def product_id( self ):

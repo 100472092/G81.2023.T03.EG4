@@ -44,6 +44,24 @@ class OrderManager:
     # pylint: disable=too-many-locals
     def send_product(self, input_file):
         """Sends the order included in the input_file"""
+        #data = self.read_json_file(input_file)
+
+        # check all the information
+
+        #self.validate_dict_attr(data, "OrderID", r"[0-9a-fA-F]{32}$", "Bad label", "order id is not valid")
+        #self.validate_dict_attr(data, "ContactEmail", r'^[a-z0-9]+([\._]?[a-z0-9]+)+[@](\w+[.])+\w{2,3}$', "Bad label",
+                                #"contact email is not valid")
+
+        #proid, reg_type = self.getting_attr_from_order_store(data)
+
+        my_sign = OrderShipping(input_file)
+
+        # save the OrderShipping in shipments_store.json
+        store = Json_op_order_shiped()
+        store.save_shipments_delivered(my_sign)
+        return my_sign.tracking_code
+
+    def read_json_file(self, input_file):
         try:
             with open(input_file, "r", encoding="utf-8", newline="") as file:
                 data = json.load(file)
@@ -52,38 +70,20 @@ class OrderManager:
             raise OrderManagementException("File is not found") from ex
         except json.JSONDecodeError as ex:
             raise OrderManagementException("JSON Decode Error - Wrong JSON Format") from ex
+        return data
 
-        # check all the information
-
-        self.validate_dict_attr(data, "OrderID", r"[0-9a-fA-F]{32}$", "Bad label", "order id is not valid")
-        self.validate_dict_attr(data, "ContactEmail", r'^[a-z0-9]+([\._]?[a-z0-9]+)+[@](\w+[.])+\w{2,3}$', "Bad label",
-                                "contact email is not valid")
-
-        proid, reg_type = self.getting_attr_from_order_store(data)
-
-        my_sign = OrderShipping(product_id=proid,
-                                order_id=data["OrderID"],
-                                order_type=reg_type,
-                                delivery_email=data["ContactEmail"])
-
-        # save the OrderShipping in shipments_store.json
-        store = Json_op_order_shiped()
-        store.save_shipments_delivered(my_sign)
-        return my_sign.tracking_code
-
-    def validate_attr(self, order_type,regex,mesage):
+    """def validate_attr(self, order_type,regex,mesage):
         myregex = re.compile(regex)
         regex_match = myregex.fullmatch(order_type)
         if not regex_match:
-            raise OrderManagementException(mesage)
-    def validate_dict_attr(self, dicci, key, regex, message_key_error, message):
-        """validates dicctionary data"""
+            raise OrderManagementException(mesage)"""
+    """def validate_dict_attr(self, dicci, key, regex, message_key_error, message):
         try:
             self.validate_attr(dicci[key], regex, message)
         except KeyError as ex:
             raise OrderManagementException(message_key_error) from ex
-
-    def getting_attr_from_order_store(self, data):
+"""
+    """def getting_attr_from_order_store(self, data):
         file_store = JSON_FILES_PATH + "orders_store.json"
         with open(file_store, "r", encoding="utf-8", newline="") as file:
             data_list = json.load(file)
@@ -111,7 +111,7 @@ class OrderManager:
         if not found:
             raise OrderManagementException("order_id not found")
         return proid, reg_type
-
+"""
     def deliver_product(self, tracking_code):
         """Register the delivery of the product"""
         self.validate_tracking_code(tracking_code)

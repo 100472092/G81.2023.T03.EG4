@@ -20,4 +20,3 @@ class Atributos:
             self.validate_attr(dicci[key], regex, message)
         except KeyError as ex:
             raise OrderManagementException(message_key_error) from ex"""
-
