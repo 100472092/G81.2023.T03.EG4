@@ -1,3 +1,5 @@
+"""Tests singleton"""
+
 from unittest import TestCase
 from uc3m_logistics import OrderManager
 from uc3m_logistics.store import json_op_orders_delivered

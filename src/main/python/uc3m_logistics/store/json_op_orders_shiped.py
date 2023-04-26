@@ -6,7 +6,7 @@ class Json_op_order_shiped():
     class __Json_op_order_shiped(Json_op):
         def __init__(self):
             self.path = JSON_FILES_PATH + "shipments_store.json"
-            self.ip = ""
+            self.ip = "_OrderShipping__tracking_code"
             self.data_list = None
 
         def save_shipments_delivered(self, shipment):

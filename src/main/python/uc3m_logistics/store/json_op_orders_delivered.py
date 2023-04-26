@@ -6,7 +6,7 @@ import json
 class Json_op_order_delivered():
     class __Json_op_order_delivered(Json_op):
         def __init__(self):
-            self.path = JSON_FILES_PATH + "shipments_store.json"
+            self.path = JSON_FILES_PATH + "shipments_delivered.json"
             self.ip = "_OrderShipping__tracking_code"
             self.data_list = None
         def open(self):
@@ -20,7 +20,9 @@ class Json_op_order_delivered():
                 raise OrderManagementException("JSON Decode Error - Wrong JSON Format") from ex
         def save_shipments_delivered(self, order_del):
             super().open()
+
             self.data_list.append(order_del.__dict__)
+            print(self.data_list)
             self.save()
     instance = None
 

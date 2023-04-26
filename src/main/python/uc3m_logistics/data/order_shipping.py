@@ -7,17 +7,16 @@ from uc3m_logistics.config.order_manager_config import JSON_FILES_PATH
 from freezegun import freeze_time
 from .order_request import OrderRequest
 from .atributo_email import Email
-from .atributo_order_id import Order_id
+from .atributo_order_id import OrderId
 #pylint: disable=too-many-instance-attributes
 class OrderShipping():
     """Class representing the shipping of an order"""
 
     def __init__(self, input_file):
-        self.__json_content = self.read_json_file(input_file)
-        self.__myorder_id , self.__myemail = self.validate_key_labels(self.__json_content)
-        self.__order_id = Order_id(self.__myorder_id).validate_attr(self.__myorder_id)
+        self.__myorder_id , self.__myemail = self.validate_key_labels(self.read_json_file(input_file))
+        self.__order_id = OrderId(self.__myorder_id).validate_attr(self.__myorder_id)
         self.__delivery_email = Email(self.__myemail).validate_attr(self.__myemail)
-        self.__product_id, self.__order_type = self.getting_attr_from_order_store(self.__json_content)
+        self.__product_id, self.__order_type = self.getting_attr_from_order_store(self.read_json_file(input_file))
         self.__alg = "SHA-256"
         self.__type = "DS"
 

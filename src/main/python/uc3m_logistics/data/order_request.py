@@ -2,22 +2,22 @@
 import hashlib
 import json
 from datetime import datetime
-from .atributo_product_id import Product_id
-from .atributo_order_type import Order_type
+from .atributo_product_id import ProductId
+from .atributo_order_type import OrderType
 from .atributo_address import Address
-from .atributo_phone_number import Phone_number
-from .atributo_zip_code import Zip_code
+from .atributo_phone_number import PhoneNumber
+from .atributo_zip_code import ZipCode
 
 class OrderRequest:
     """Class representing the register of the order in the system"""
     #pylint: disable=too-many-arguments
     def __init__( self, product_id, order_type,
                   delivery_address, phone_number, zip_code ):
-        self.__product_id = Product_id(product_id).validate_attr(product_id)
+        self.__product_id = ProductId(product_id).validate_attr(product_id)
         self.__delivery_address = Address(delivery_address).validate_attr(delivery_address)
-        self.__order_type = Order_type(order_type).validate_attr(order_type)
-        self.__phone_number = Phone_number(phone_number).validate_attr(phone_number)
-        self.__zip_code = Zip_code(zip_code).validate_attr(zip_code)
+        self.__order_type = OrderType(order_type).validate_attr(order_type)
+        self.__phone_number = PhoneNumber(phone_number).validate_attr(phone_number)
+        self.__zip_code = ZipCode(zip_code).validate_attr(zip_code)
         justnow = datetime.utcnow()
         self.__time_stamp = datetime.timestamp(justnow)
         self.__order_id =  hashlib.md5(self.__str__().encode()).hexdigest()
