@@ -50,6 +50,6 @@ class OrderManager:
             OrderManager.instance = OrderManager.__OrderManager()
         return OrderManager.instance
 
-    # pylint: disable=too-many-arguments
+
 
 
