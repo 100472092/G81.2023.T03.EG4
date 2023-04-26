@@ -1,6 +1,6 @@
 """atributo: phoneNumber"""
 
-from .Atributo import Atributos
+from .atributo import Atributos
 
 class PhoneNumber(Atributos):
     def __init__(self, valor):

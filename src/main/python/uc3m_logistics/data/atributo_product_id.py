@@ -1,6 +1,6 @@
 """atributo: productId"""
 
-from .Atributo import Atributos
+from .atributo import Atributos
 from uc3m_logistics.exception.order_management_exception import OrderManagementException
 class ProductId(Atributos):
     def __init__(self, valor):
