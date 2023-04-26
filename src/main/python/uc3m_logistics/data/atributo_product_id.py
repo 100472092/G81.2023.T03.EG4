@@ -1,9 +1,16 @@
 """atributo: productId"""
-
-from .atributo import Atributos
+# pylint: disable=import-error
 from uc3m_logistics.exception.order_management_exception import OrderManagementException
+from .atributo import Atributos
+
+
+# pylint: disable=too-few-public-methods
+
 class ProductId(Atributos):
+    """product_id"""
+
     def __init__(self, valor):
+        super().__init__()
         self._validation_pattern = r"^[0-9]{13}$"
         self._error_message = "Invalid EAN13 code string"
         self._attr_value = self.validate_attr(valor)

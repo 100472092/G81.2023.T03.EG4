@@ -15,16 +15,16 @@ class TestDeliverProduct(TestCase):
         self.assertEqual(my_manager, my_manager2)
     def test_singletone_json_order_delivered(self):
         """two instances that must be equal"""
-        my_store = json_op_orders_delivered.Json_op_order_delivered()
-        my_store1 = json_op_orders_delivered.Json_op_order_delivered()
+        my_store = json_op_orders_delivered.JsonOpOrderDelivered()
+        my_store1 = json_op_orders_delivered.JsonOpOrderDelivered()
         self.assertEqual(my_store, my_store1)
     def test_singletone_json_order_shiped(self):
         """two instances that must be equal"""
-        my_store = json_op_orders_shiped.Json_op_order_shiped()
-        my_store1 = json_op_orders_shiped.Json_op_order_shiped()
+        my_store = json_op_orders_shiped.JsonOpOrderShiped()
+        my_store1 = json_op_orders_shiped.JsonOpOrderShiped()
         self.assertEqual(my_store, my_store1)
     def test_singletone_json_order_store(self):
         """two instances that must be equal"""
-        my_store = json_op_orders_store.Json_op_order_store()
-        my_store1 = json_op_orders_store.Json_op_order_store()
+        my_store = json_op_orders_store.JsonOpOrderStore()
+        my_store1 = json_op_orders_store.JsonOpOrderStore()
         self.assertEqual(my_store, my_store1)

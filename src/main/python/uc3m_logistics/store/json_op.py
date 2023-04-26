@@ -1,11 +1,16 @@
+"""Json operation master"""
+# pylint: disable=import-error
+
 import json
 from uc3m_logistics.exception.order_management_exception import OrderManagementException
 
 
-class Json_op():
+class JsonOp():
+    """Json operation master"""
+
     def __init__(self):
         self.path = ""
-        self.ip = ""
+        self.key = ""
         self.data_list = None
 
     def open(self):
@@ -19,14 +24,18 @@ class Json_op():
             self.data_list = []
         except json.JSONDecodeError as ex:
             raise OrderManagementException("JSON Decode Error - Wrong JSON Format") from ex
+
     def search(self, value):
+        """searchsa an element in data_list and returns it"""
         if self.data_list is None:
             self.open()
         for item in self.data_list:
-            if item[self.ip] == value:
+            if item[self.key] == value:
                 return item
         return None
+
     def save(self):
+        """dumps data list in file"""
         if self.data_list is None:
             self.open()
         try:

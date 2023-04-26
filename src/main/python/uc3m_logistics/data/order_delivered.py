@@ -3,7 +3,7 @@
 
 import os
 from datetime import datetime
-from uc3m_logistics.store.json_op_orders_shiped import Json_op_order_shiped
+from uc3m_logistics.store.json_op_orders_shiped import JsonOpOrderShiped
 from uc3m_logistics.exception.order_management_exception import OrderManagementException
 from .atributo_tracking_code import TrackingCode
 
@@ -17,7 +17,7 @@ class OrderDelivered():
 
     def check_tracking_code(self):
         """checks if tracking code exits"""
-        store = Json_op_order_shiped()
+        store = JsonOpOrderShiped()
         store.open()
         # search this tracking_code
         order = store.search(self.tracking_code)
